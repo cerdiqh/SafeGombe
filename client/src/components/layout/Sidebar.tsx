@@ -122,13 +122,13 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
             <Label className="block text-sm font-medium text-foreground mb-2">Area</Label>
             <Select 
               value={selectedFilters.area} 
-              onValueChange={(value) => onFiltersChange({...selectedFilters, area: value})}
+              onValueChange={(value) => onFiltersChange({...selectedFilters, area: value === "all" ? "" : value})}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Areas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Areas</SelectItem>
+                <SelectItem value="all">All Areas</SelectItem>
                 <SelectItem value="bolari">Bolari District</SelectItem>
                 <SelectItem value="billiri">Billiri LGA</SelectItem>
                 <SelectItem value="central">Gombe Central</SelectItem>
