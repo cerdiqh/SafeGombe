@@ -26,6 +26,180 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ stats, selectedFilters, onFiltersChange }: SidebarProps) {
+  // Comprehensive Gombe areas list (LGAs and notable towns)
+  const areaOptions = [
+    // LGAs
+    "Akko LGA",
+    "Balanga LGA",
+    "Billiri LGA",
+    "Dukku LGA",
+    "Funakaye LGA",
+    "Gombe LGA",
+    "Kaltungo LGA",
+    "Kwami LGA",
+    "Nafada LGA",
+    "Shongom LGA",
+    "Yamaltu/Deba LGA",
+    // Shongom LGA towns
+    "Boh",
+    "Burak",
+    "Filiya",
+    "Bango",
+    "Bangunji",
+    "Bikutture",
+    "Bikwala",
+    "Bishiwai",
+    "Dilange (Dutse)",
+    "Kalo",
+    "Kulan",
+    "Laluwa",
+    "Najeji",
+    "Suli",
+    "Yelchen-Yelchen",
+    // Yamaltu/Deba LGA towns
+    "Deba",
+    "Dangar",
+    "Dumbu",
+    "Jannawo",
+    "Kakkau",
+    "Kanawa",
+    "Kunnuwal",
+    "Kuri",
+    "Lambam",
+    "Lano",
+    "Nasarawo",
+    "Nono M. Isa",
+    "Poli",
+    "Saruje W.",
+    "Wajari",
+    "Jodoma",
+    // Kwami LGA towns
+    "Mallam Sidi",
+    "Kwami",
+    "Jore",
+    "Jabla",
+    "Banishuwa",
+    "Bojude",
+    "Bomala",
+    "Bula",
+    "Bunu",
+    "Dawo",
+    "Diango",
+    "Gabuku",
+    "Gadam",
+    "Gamadadi",
+    "H. Dinawa",
+    "Habuja",
+    // Nafada LGA towns
+    "Nafada",
+    "Langa",
+    "Mada",
+    "Maru",
+    "Papa",
+    "Shole",
+    "Shonganawo",
+    "Suka",
+    "Tondi",
+    "Wokollu",
+    "Zindir",
+    "Zangoma Kyari",
+    "Kiyayo",
+    "Kuka",
+    "Lafiyawo",
+    // Gombe LGA notable areas
+    "Gombe (rural)",
+    "Arawa",
+    "Doma",
+    "Gabukku",
+    "Inna",
+    "Manawashi",
+    "Pantami",
+    "Ajiya",
+    "Bajoga",
+    // Kaltungo LGA towns
+    "Kaltungo",
+    "Awak",
+    "Bagaruwa",
+    "Bwara",
+    "Daura",
+    "Dodonruwa",
+    "Dundaye",
+    "Garin Bako",
+    "Garin Barau",
+    "B/kaltin",
+    "Okshenda",
+    // Akko LGA towns
+    "Gona",
+    "Kumo",
+    "Pindiga",
+    "Garin",
+    "Garba Jalingo",
+    "Jauro Tukur",
+    "Kembu",
+    "Panda",
+    "Lergo",
+    "Mararraban-Tumu",
+    // Balanga LGA towns
+    "Talasse",
+    "Bambam",
+    "Bangu",
+    "Cham-Mwona",
+    "Chum-Kindiyo",
+    "Daduya Hill",
+    "Dala-Waja",
+    "Degri Dong",
+    "Gasi",
+    "Gelengu",
+    "Kulani",
+    "Nyuwar",
+    "Refele",
+    // Billiri LGA towns
+    "Billiri-Tangale",
+    "Ayabu",
+    "Banganje",
+    "Bare",
+    "Billiri",
+    "Kalmai",
+    "Kulkul",
+    "Laberpit",
+    "Lakalkal",
+    "Lamugu",
+    "Landongor",
+    "Lanshi Daji",
+    "Pade Kungu",
+    // Dukku LGA towns
+    "Dukku",
+    "Jamani Kaigamari",
+    "Gombe Abba",
+    "Hashidu",
+    "Bawa",
+    "Balikaje",
+    "Bomala",
+    "Daminya",
+    "Dawiya",
+    "Du",
+    "Jangira",
+    "Kokkobe",
+    "Kuni Walowa",
+    "Wuro Bali",
+    "Wuro Tara",
+    "Yaufa",
+    "Zego/Kunde",
+    // Funakaye LGA towns
+    "Funakaye",
+    "Ashaka",
+    "Badadi",
+    "Bage",
+    "Bulturi",
+    "Gulwari",
+    "Lambo Dashi",
+    "W. Nai",
+    "Yayaru",
+    "Zadawa",
+    "Abuku",
+    "Baba Zur",
+    "Bajoga"
+  ];
   const handleIncidentTypeChange = (type: string, checked: boolean) => {
     const newTypes = checked 
       ? [...selectedFilters.incidentTypes, type]
@@ -38,10 +212,16 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
   };
 
   const incidentTypeConfig = [
-    { id: "terrorism", label: "Terrorism", severity: "HIGH", color: "destructive" },
-    { id: "banditry", label: "Banditry", severity: "MED", color: "warning" },
+    { id: "road_accident", label: "Road Accident", severity: "HIGH", color: "destructive" },
+    { id: "theft", label: "Theft", severity: "MED", color: "warning" },
     { id: "cattle_rustling", label: "Cattle Rustling", severity: "MED", color: "warning" },
-    { id: "kalare_gangs", label: "Kalare Gangs", severity: "HIGH", color: "destructive" },
+    { id: "farmer_herder_conflict", label: "Farmer-Herder Conflict", severity: "HIGH", color: "destructive" },
+    { id: "domestic_violence", label: "Domestic Violence", severity: "HIGH", color: "destructive" },
+    { id: "armed_robbery", label: "Armed Robbery", severity: "HIGH", color: "destructive" },
+    { id: "market_dispute", label: "Market Dispute", severity: "LOW", color: "info" },
+    { id: "flooding", label: "Flooding", severity: "MED", color: "warning" },
+    { id: "fire_outbreak", label: "Fire Outbreak", severity: "HIGH", color: "destructive" },
+    { id: "suspicious_activity", label: "Suspicious Activity", severity: "LOW", color: "info" },
   ];
 
   return (
@@ -108,7 +288,8 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
                     {config.label}
                   </Label>
                   <span className={`text-xs px-2 py-1 rounded ${
-                    config.color === 'destructive' ? 'bg-destructive text-destructive-foreground' : 'bg-warning text-warning-foreground'
+                    config.color === 'destructive' ? 'bg-destructive text-destructive-foreground' : 
+                    config.color === 'warning' ? 'bg-warning text-warning-foreground' : 'bg-blue-100 text-blue-800'
                   }`}>
                     {config.severity}
                   </span>
@@ -129,10 +310,9 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Areas</SelectItem>
-                <SelectItem value="bolari">Bolari District</SelectItem>
-                <SelectItem value="billiri">Billiri LGA</SelectItem>
-                <SelectItem value="central">Gombe Central</SelectItem>
-                <SelectItem value="kekadafari">Kekadafari</SelectItem>
+                {areaOptions.map((name) => (
+                  <SelectItem key={name} value={name.toLowerCase()}>{name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -165,9 +345,10 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
                 <h4 className="font-semibold text-destructive">High-Risk Areas</h4>
                 <p className="text-sm text-muted-foreground mt-1">Based on recent security data</p>
                 <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                  <li>• Bolari District - Kalare activity</li>
-                  <li>• Billiri LGA - Cattle rustling</li>
-                  <li>• Rural areas - Banditry reports</li>
+                  <li>• Billiri LGA - Farmer-herder conflicts</li>
+                  <li>• Kaltungo LGA - Cattle rustling incidents</li>
+                  <li>• Rural roads - Traffic accidents frequent</li>
+                  <li>• Market areas - Theft reports</li>
                 </ul>
               </div>
             </div>

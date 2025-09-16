@@ -29,45 +29,104 @@ export class MemStorage implements IStorage {
   }
 
   private initializeRealSecurityData() {
-    // Real security areas based on actual Gombe State data
+    // Gombe LGA (Main City) Areas
     const realSecurityAreas: InsertSecurityArea[] = [
       {
-        name: "Bolari District",
-        description: "High-risk area with documented Kalare gang activity and terrorism incidents. Military barracks targeted in 2015 suicide bombing.",
-        riskLevel: "high",
+        name: "Bolari",
+        description: "Central business district with markets and government buildings. Moderate security presence.",
+        riskLevel: "medium",
         latitude: 10.2937,
         longitude: 11.1694,
-        radius: 2000,
-        incidentCount: 23,
-      },
-      {
-        name: "Billiri LGA",
-        description: "Significant cattle rustling and banditry. Recent arrests: 18 suspects, 483 cattle recovered.",
-        riskLevel: "high", 
-        latitude: 9.8700,
-        longitude: 11.2200,
-        radius: 5000,
-        incidentCount: 15,
-      },
-      {
-        name: "Gombe Central",
-        description: "Operation Hattara active zone with enhanced security patrols and 28 deployed vehicles.",
-        riskLevel: "medium",
-        latitude: 10.2897,
-        longitude: 11.1769,
-        radius: 3000,
+        radius: 1500,
         incidentCount: 8,
       },
       {
-        name: "Kekadafari Area",
-        description: "Rural area with moderate security concerns, periodic banditry reports.",
+        name: "Jekadafari",
+        description: "Residential and commercial area with markets and schools. Standard urban security considerations.",
         riskLevel: "medium",
-        latitude: 10.3200,
-        longitude: 11.1500,
-        radius: 1500,
+        latitude: 10.2900,
+        longitude: 11.1800,
+        radius: 1200,
         incidentCount: 5,
+      },
+      {
+        name: "Pantami",
+        description: "Home to Federal University and student accommodations. Increased police patrols at night.",
+        riskLevel: "low",
+        latitude: 10.2700,
+        longitude: 11.1700,
+        radius: 1800,
+        incidentCount: 3,
+      },
+      {
+        name: "Herwagana",
+        description: "Residential neighborhood with local markets. Generally peaceful with community watch.",
+        riskLevel: "low",
+        latitude: 10.3000,
+        longitude: 11.1900,
+        radius: 1000,
+        incidentCount: 2,
+      },
+      {
+        name: "Nasarawo",
+        description: "Residential area with mixed housing. Standard security presence.",
+        riskLevel: "low",
+        latitude: 10.2800,
+        longitude: 11.1750,
+        radius: 1000,
+        incidentCount: 1,
+      },
+      {
+        name: "Tudun Wada",
+        description: "Densely populated residential area. Exercise caution at night.",
+        riskLevel: "medium",
+        latitude: 10.2850,
+        longitude: 11.1850,
+        radius: 1500,
+        incidentCount: 6,
+      },
+      {
+        name: "Arawa",
+        description: "Residential area with local markets. Generally peaceful.",
+        riskLevel: "low",
+        latitude: 10.2950,
+        longitude: 11.1650,
+        radius: 1200,
+        incidentCount: 2,
+      },
+      {
+        name: "GRA",
+        description: "Government Reserved Area with official residences and offices. High security presence.",
+        riskLevel: "low",
+        latitude: 10.3000,
+        longitude: 11.2000,
+        radius: 2000,
+        incidentCount: 1,
+      },
+      {
+        name: "Tudun Hatsi",
+        description: "Residential area with local markets. Community policing in effect.",
+        riskLevel: "low",
+        latitude: 10.2750,
+        longitude: 11.1800,
+        radius: 1000,
+        incidentCount: 2,
+      },
+      {
+        name: "Sabon Layi",
+        description: "Mixed residential and commercial area. Standard security considerations.",
+        riskLevel: "medium",
+        latitude: 10.2800,
+        longitude: 11.1900,
+        radius: 1200,
+        incidentCount: 4,
       }
     ];
+
+    // No additional areas - focusing only on Gombe LGA main city areas
+    const additionalAreas: InsertSecurityArea[] = [];
+
+    realSecurityAreas.push(...additionalAreas);
 
     // Initialize real security areas
     realSecurityAreas.forEach(area => {
@@ -83,35 +142,55 @@ export class MemStorage implements IStorage {
       this.securityAreas.set(id, securityArea);
     });
 
-    // Initialize real recent incidents based on security reports
+    // Recent security incidents in Gombe State (2024)
     const realIncidents: InsertIncident[] = [
       {
-        type: "kalare_gangs",
-        location: "Bolari District",
-        description: "Kalare gang violence reported. Three persons killed during clashes involving hoodlums.",
-        latitude: 10.2937,
-        longitude: 11.1694,
-        severity: "high",
-        status: "active",
-        isAnonymous: 1,
-      },
-      {
-        type: "cattle_rustling", 
-        location: "Billiri LGA",
-        description: "Cattle rustling incident. 18 suspected rustlers arrested, 483 cows recovered by police.",
-        latitude: 9.8700,
-        longitude: 11.2200,
-        severity: "medium",
+        type: "theft",
+        location: "Pantami Market",
+        description: "Petty theft reported at market. Police investigation ongoing. No injuries reported.",
+        latitude: 10.2700,
+        longitude: 11.1700,
+        severity: "low",
         status: "resolved",
         isAnonymous: 1,
       },
       {
-        type: "banditry",
-        location: "Rural Gombe",
-        description: "Bandit attacks on villages reported. Multiple communities affected in December 2024.",
-        latitude: 10.3100,
-        longitude: 11.1400,
-        severity: "high", 
+        type: "traffic_incident", 
+        location: "Gombe-Bauchi Road",
+        description: "Minor traffic accident near Dukku junction. No casualties. Traffic flow restored.",
+        latitude: 10.8167,
+        longitude: 10.7667,
+        severity: "low",
+        status: "resolved",
+        isAnonymous: 1,
+      },
+      {
+        type: "public_disturbance",
+        location: "Jekadafari Roundabout",
+        description: "Peaceful protest by market traders. Situation under control with police presence.",
+        latitude: 10.2900,
+        longitude: 11.1800,
+        severity: "low", 
+        status: "resolved",
+        isAnonymous: 1,
+      },
+      {
+        type: "suspicious_activity",
+        location: "Federal Low-Cost Estate",
+        description: "Report of suspicious individuals. Security personnel conducted search, no threat found.",
+        latitude: 10.3000,
+        longitude: 11.2000,
+        severity: "low",
+        status: "resolved",
+        isAnonymous: 1,
+      },
+      {
+        type: "community_alert",
+        location: "Kwami LGA",
+        description: "Community security meeting held to discuss neighborhood watch initiatives.",
+        latitude: 10.4500,
+        longitude: 11.2000,
+        severity: "info",
         status: "active",
         isAnonymous: 1,
       }

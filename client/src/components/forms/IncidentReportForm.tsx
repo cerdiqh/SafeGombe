@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertIncidentSchema, type InsertIncident } from "@shared/schema";
+import { insertIncidentSchema, type InsertIncident, type Incident } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useGeolocation } from "@/hooks/use-geolocation";
@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
-import { MapPin, Phone, Camera, X } from "lucide-react";
+import { MapPin, Phone, Camera, X, Upload, AlertTriangle, Shield } from "lucide-react";
 
 interface IncidentReportFormProps {
   onSubmit: () => void;
@@ -24,6 +24,9 @@ interface IncidentReportFormProps {
 
 export default function IncidentReportForm({ onSubmit, onCancel }: IncidentReportFormProps) {
   const [isAnonymous, setIsAnonymous] = useState(true);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { location, getCurrentLocation, isLoading: locationLoading } = useGeolocation();
@@ -34,8 +37,8 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
       type: "",
       location: "",
       description: "",
-      latitude: location?.latitude || 10.2937, // Default to Gombe coordinates
-      longitude: location?.longitude || 11.1694,
+      latitude: location?.latitude || 10.2890, // Default to Gombe coordinates
+      longitude: location?.longitude || 11.1671,
       severity: "medium",
       status: "active",
       isAnonymous: 1,
@@ -43,42 +46,187 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
   });
 
   const createIncidentMutation = useMutation({
-    mutationFn: (data: InsertIncident) => apiRequest("POST", "/api/incidents", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/incidents"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
-      toast({
-        title: "Incident Reported",
-        description: "Your incident report has been submitted successfully.",
+    mutationFn: async (data: InsertIncident) => {
+      // Handle photo upload if present
+      const formData = new FormData();
+      
+      // Add all form data to FormData
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
       });
-      onSubmit();
+      
+      // Add photo if available
+      if (selectedPhoto) {
+        formData.append('photo', selectedPhoto);
+      }
+
+      // Use fetch directly for FormData
+      const response = await fetch('/api/incidents', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || 'Failed to submit incident');
+      }
+
+      return response.json();
     },
-    onError: (error) => {
+    onMutate: async (newIncident) => {
+      // Optimistically add the incident to any cached incidents lists
+      const optimistic: any = {
+        ...newIncident,
+        id: crypto.randomUUID(),
+        reportedAt: new Date().toISOString(),
+        status: 'pending', // Mark as pending until confirmed by server
+      };
+      
+      // Update the queries optimistically
+      queryClient.setQueryData<Incident[]>(
+        ['/api/incidents'], 
+        (old = []) => [optimistic, ...old]
+      );
+      
+      return { previousIncidents: queryClient.getQueryData(['/api/incidents']) };
+    },
+    onError: (error, _variables, context) => {
+      console.error('Incident submission error:', error);
+      
+      // Revert optimistic updates
+      if (context?.previousIncidents) {
+        queryClient.setQueryData(['/api/incidents'], context.previousIncidents);
+      }
+      
       toast({
         title: "Report Failed",
-        description: "Failed to submit incident report. Please try again.",
+        description: error.message || "Failed to submit incident report. Please try again.",
         variant: "destructive",
       });
     },
+    onSuccess: (data) => {
+      // Update the optimistic update with the real data
+      queryClient.setQueryData<Incident[]>(
+        ['/api/incidents'], 
+        (old = []) => {
+          const filtered = old.filter(incident => incident.id !== data.id);
+          return [data, ...filtered];
+        }
+      );
+      
+      // Invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/security-areas'] });
+      
+      // Show success message
+      toast({
+        title: "Incident Reported!",
+        description: "Your report has been submitted successfully.",
+      });
+      
+      // Reset form
+      form.reset();
+      setSelectedPhoto(null);
+      setPhotoPreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+      // Close the form
+      onSubmit();
+    },
   });
 
-  const handleSubmit = (data: InsertIncident) => {
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File",
+          description: "Please select an image file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setSelectedPhoto(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPhotoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setSelectedPhoto(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (data: InsertIncident) => {
     const reportData = {
       ...data,
       latitude: location?.latitude || data.latitude,
       longitude: location?.longitude || data.longitude,
       isAnonymous: isAnonymous ? 1 : 0,
+      photo: photoPreview || null,
     };
+
+    // If offline, store locally and schedule background sync
+    if (!navigator.onLine && 'serviceWorker' in navigator) {
+      try {
+        navigator.serviceWorker.controller?.postMessage({
+          type: 'STORE_OFFLINE_INCIDENT',
+          incident: { ...reportData, id: crypto.randomUUID() },
+        });
+        const reg = await navigator.serviceWorker.ready;
+        if ('sync' in reg) {
+          // @ts-expect-error Background Sync type is not in TS DOM by default
+          await reg.sync.register('background-sync-incident');
+        }
+        toast({
+          title: 'Saved Offline',
+          description: 'Your report will be submitted when you are back online.',
+        });
+        onSubmit();
+        return;
+      } catch (_e) {
+        // fall through to normal mutation
+      }
+    }
+
     createIncidentMutation.mutate(reportData);
   };
 
   const incidentTypes = [
-    { value: "terrorism", label: "Terrorism" },
-    { value: "banditry", label: "Banditry" },
+    { value: "road_accident", label: "Road Accident" },
+    { value: "theft", label: "Theft" },
     { value: "cattle_rustling", label: "Cattle Rustling" },
-    { value: "kalare_gangs", label: "Kalare Gang Activity" },
-    { value: "kidnapping", label: "Kidnapping" },
+    { value: "farmer_herder_conflict", label: "Farmer-Herder Conflict" },
+    { value: "domestic_violence", label: "Domestic Violence" },
     { value: "armed_robbery", label: "Armed Robbery" },
+    { value: "market_dispute", label: "Market Dispute" },
+    { value: "flooding", label: "Flooding" },
+    { value: "fire_outbreak", label: "Fire Outbreak" },
     { value: "suspicious_activity", label: "Suspicious Activity" },
     { value: "other", label: "Other" },
   ];
@@ -142,7 +290,7 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-2">
                   <MapPin className="w-4 h-4" />
                   <span data-testid="text-coordinates">
-                    GPS: {location?.latitude?.toFixed(4) || "10.2937"}°N, {location?.longitude?.toFixed(4) || "11.1694"}°E
+                    GPS: {location?.latitude?.toFixed(4) || "10.2890"}°N, {location?.longitude?.toFixed(4) || "11.1671"}°E
                   </span>
                   <Button 
                     type="button" 
@@ -208,14 +356,52 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
             )}
           />
           
-          {/* Photo Upload Placeholder */}
+          {/* Photo Upload */}
           <div>
             <Label className="block text-sm font-medium text-foreground mb-2">Photo Evidence (Optional)</Label>
-            <Card className="border-2 border-dashed border-border p-4 text-center">
-              <Camera className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">Click to upload photo</p>
-              <input type="file" accept="image/*" className="hidden" />
-            </Card>
+            {photoPreview ? (
+              <Card className="border border-border p-3">
+                <div className="flex items-center space-x-3">
+                  <img 
+                    src={photoPreview} 
+                    alt="Preview" 
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{selectedPhoto?.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(selectedPhoto?.size || 0 / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={removePhoto}
+                    data-testid="button-remove-photo"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <Card 
+                className="border-2 border-dashed border-border p-4 text-center cursor-pointer hover:border-primary transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Camera className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Click to upload photo</p>
+                <p className="text-xs text-muted-foreground mt-1">Max 5MB, JPG/PNG</p>
+                <input 
+                  ref={fileInputRef}
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                  data-testid="input-photo-upload"
+                />
+              </Card>
+            )}
           </div>
           
           {/* Anonymous Reporting */}
@@ -229,12 +415,55 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
             <Label htmlFor="anonymous" className="text-sm">Submit anonymously</Label>
           </div>
           
-          {/* Emergency Contact */}
-          <Card className="bg-muted/50 border border-border p-3">
-            <div className="flex items-center space-x-2 text-sm">
-              <Phone className="w-4 h-4 text-destructive" />
-              <span className="font-medium">Emergency:</span>
-              <span>199 (Police) | 123 (Operation Hattara)</span>
+          {/* Emergency Contact & Safety Info */}
+          <Card className="bg-muted/50 border border-border p-4">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2 text-sm">
+                <Phone className="w-4 h-4 text-destructive" />
+                <span className="font-medium">Emergency Contacts:</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex justify-between">
+                  <span>Police:</span>
+                  <span className="font-mono font-medium">199</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Operation Hattara:</span>
+                  <span className="font-mono font-medium">123</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Fire Service:</span>
+                  <span className="font-mono font-medium">199</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Medical:</span>
+                  <span className="font-mono font-medium">199</span>
+                </div>
+              </div>
+              
+              <div className="pt-2 border-t border-border">
+                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                  <Shield className="w-3 h-3" />
+                  <span>Operation Hattara active - 28 security vehicles deployed</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Area Safety Information */}
+          <Card className="bg-blue-50 border border-blue-200 p-3">
+            <div className="flex items-start space-x-2">
+              <AlertTriangle className="w-4 h-4 text-blue-600 mt-0.5" />
+              <div className="text-xs">
+                <p className="font-medium text-blue-800 mb-1">Safety Tips:</p>
+                <ul className="space-y-1 text-blue-700">
+                  <li>• Exercise caution in remote areas of Billiri and Kaltungo LGAs</li>
+                  <li>• Report suspicious activities immediately</li>
+                  <li>• Stay alert during market days and evening hours</li>
+                  <li>• Keep emergency contacts saved in your phone</li>
+                  <li>• Avoid traveling alone on rural roads after dark</li>
+                </ul>
+              </div>
             </div>
           </Card>
           

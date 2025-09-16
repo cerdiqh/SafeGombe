@@ -16,13 +16,9 @@ export function useGeolocation() {
 
   const getCurrentLocation = () => {
     setIsLoading(true);
-    setLocation(prev => ({ ...prev, error: null }));
 
     if (!navigator.geolocation) {
-      setLocation(prev => ({ 
-        ...prev, 
-        error: "Geolocation is not supported by this browser." 
-      }));
+      // Keep default Gombe location if geolocation is not supported
       setIsLoading(false);
       return;
     }
@@ -37,31 +33,27 @@ export function useGeolocation() {
         setIsLoading(false);
       },
       (error) => {
-        let errorMessage = "Failed to get location.";
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = "Location access denied by user.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information is unavailable.";
-            break;
-          case error.TIMEOUT:
-            errorMessage = "Location request timed out.";
-            break;
-        }
-        setLocation(prev => ({ ...prev, error: errorMessage }));
+        // On error, keep the default Gombe location and just log the error
+        console.warn('Geolocation error, using default Gombe location:', error.message);
         setIsLoading(false);
       },
       {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
+        enableHighAccuracy: false, // Less strict for better compatibility
+        timeout: 10000, // Longer timeout
+        maximumAge: 300000, // Accept cached location up to 5 minutes old
       }
     );
   };
 
   useEffect(() => {
-    // Try to get location on mount
+    // Set default Gombe location immediately, then try to get actual location
+    setLocation({
+      latitude: 10.2890, // Default to Gombe State coordinates
+      longitude: 11.1671,
+      error: null,
+    });
+    
+    // Try to get actual location
     getCurrentLocation();
   }, []);
 

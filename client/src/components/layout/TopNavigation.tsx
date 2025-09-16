@@ -1,5 +1,7 @@
-import { Shield, Wifi, WifiOff } from "lucide-react";
+import { Shield, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
+import { cn } from "@/lib/utils";
 
 interface TopNavigationProps {
   isOnline: boolean;
@@ -12,62 +14,41 @@ export default function TopNavigation({ isOnline, onReportClick }: TopNavigation
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+            <Link href="/" className="flex-shrink-0 flex items-center">
               <Shield className="text-primary w-8 h-8 mr-3" />
               <h1 className="text-xl font-bold text-foreground">GombeSafe</h1>
+            </Link>
+            <div className="hidden md:ml-10 md:flex md:space-x-8">
+              <Link href="/safety" className="inline-flex items-center px-1 pt-1 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                <ShieldAlert className="h-4 w-4 mr-1.5" />
+                Safety Network
+              </Link>
             </div>
           </div>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#dashboard" className="text-foreground hover:text-primary transition-colors">
-              Dashboard
-            </a>
-            <a href="#report" className="text-foreground hover:text-primary transition-colors">
-              Report Incident
-            </a>
-            <a href="#areas" className="text-foreground hover:text-primary transition-colors">
-              Safety Areas
-            </a>
-            
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                {isOnline ? (
-                  <>
-                    <div className="w-3 h-3 bg-success rounded-full" />
-                    <span className="text-sm text-muted-foreground">Online</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-3 h-3 bg-warning rounded-full" />
-                    <span className="text-sm text-muted-foreground">Offline</span>
-                  </>
-                )}
-              </div>
-              
-              <Button 
-                data-testid="button-report-incident"
-                onClick={onReportClick}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg">+</span>
-                  <span>Report Incident</span>
-                </div>
+          <div className="flex items-center space-x-4">
+            <Link href="/safety">
+              <Button variant="ghost" size="sm" className="hidden md:flex items-center">
+                <ShieldAlert className="h-4 w-4 mr-1.5" />
+                Safety Hub
               </Button>
-            </div>
-          </div>
-          
-          <div className="md:hidden flex items-center">
-            <button className="text-foreground hover:text-primary">
-              <div className="w-6 h-6 flex flex-col justify-center space-y-1">
-                <div className="w-full h-0.5 bg-current"></div>
-                <div className="w-full h-0.5 bg-current"></div>
-                <div className="w-full h-0.5 bg-current"></div>
+            </Link>
+            <Button 
+              data-testid="button-report-incident"
+              onClick={onReportClick}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <div className="flex items-center space-x-2">
+                <span className="text-lg">+</span>
+                <span className="hidden sm:inline">Report Incident</span>
               </div>
-            </button>
+            </Button>
           </div>
         </div>
       </div>
+      <div className={cn(
+        "w-full h-1 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500",
+        !isOnline && "bg-gray-400"
+      )} />
     </nav>
   );
 }

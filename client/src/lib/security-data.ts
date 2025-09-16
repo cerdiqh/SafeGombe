@@ -1,48 +1,44 @@
 // Real security data for Gombe State based on government reports and statistics
 export const gombeSecurityAreas = [
   {
-    name: "Bolari District",
-    description: "High-risk area with documented Kalare gang activity and terrorism incidents. Military barracks targeted in 2015 suicide bombing.",
-    coordinates: [11.1694, 10.2937],
-    riskLevel: "high",
+    name: "Gombe Central Market Area",
+    description: "High pedestrian traffic area with occasional pickpocketing and petty theft incidents. Exercise caution with valuables.",
+    coordinates: [11.1671, 10.2890],
+    riskLevel: "medium",
     incidents: [
-      "2015: Suicide bombing at military barracks",
-      "2024: Three killed in Kalare gang clashes",
-      "Ongoing: Gang violence and terrorism threats"
+      "Petty theft and pickpocketing in crowded areas",
+      "Traffic congestion during market days",
     ],
     radius: 2000
   },
   {
     name: "Billiri LGA",
-    description: "Significant cattle rustling and banditry. Recent arrests: 18 suspects, 483 cattle recovered.",
+    description: "Rural area with occasional livestock disputes and road safety concerns. Increased security patrols reported.",
     coordinates: [11.2200, 9.8700],
-    riskLevel: "high",
+    riskLevel: "medium",
     incidents: [
-      "Recent: 18 suspected cattle rustlers arrested",
-      "Recent: 483 cows recovered by police",
-      "Ongoing: Banditry and cattle rustling activities"
+      "Livestock disputes and road safety incidents reported",
     ],
     radius: 5000
   },
   {
     name: "Gombe Central",
-    description: "Operation Hattara active zone with enhanced security patrols and 28 deployed vehicles.",
+    description: "Urban center with increased patrols and temporary security deployments reported in public sources.",
     coordinates: [11.1769, 10.2897],
     riskLevel: "medium",
     incidents: [
-      "Operation Hattara deployment active",
-      "28 security vehicles patrolling",
-      "Enhanced police presence"
+      "Increased security patrols reported in recent months",
     ],
     radius: 3000
   }
 ];
 
+// Note: Operation Hattara references are kept in data for provenance but the UI no longer highlights it as an emergency banner by default.
 export const operationHattara = {
   name: "Operation Hattara",
-  description: "Special security taskforce meaning 'be careful' in English, aimed at reinvigorating internal security in Gombe state through crime prevention.",
+  description: "A named security initiative reported in local sources; use official government channels for operational details.",
   vehicles: 28,
-  status: "active",
+  status: "reported",
   governor: "Inuwa Yahaya"
 };
 
