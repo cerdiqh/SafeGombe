@@ -211,17 +211,19 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
     });
   };
 
-  const incidentTypeConfig = [
-    { id: "road_accident", label: "Road Accident", severity: "HIGH", color: "destructive" },
-    { id: "theft", label: "Theft", severity: "MED", color: "warning" },
-    { id: "cattle_rustling", label: "Cattle Rustling", severity: "MED", color: "warning" },
-    { id: "farmer_herder_conflict", label: "Farmer-Herder Conflict", severity: "HIGH", color: "destructive" },
-    { id: "domestic_violence", label: "Domestic Violence", severity: "HIGH", color: "destructive" },
-    { id: "armed_robbery", label: "Armed Robbery", severity: "HIGH", color: "destructive" },
-    { id: "market_dispute", label: "Market Dispute", severity: "LOW", color: "info" },
-    { id: "flooding", label: "Flooding", severity: "MED", color: "warning" },
-    { id: "fire_outbreak", label: "Fire Outbreak", severity: "HIGH", color: "destructive" },
-    { id: "suspicious_activity", label: "Suspicious Activity", severity: "LOW", color: "info" },
+  const incidentTypes = [
+    { value: "all", label: "All Incidents" },
+    { value: "kalare_gang_activity", label: "Kalare Gang Activity" },
+    { value: "road_accident", label: "Road Accident" },
+    { value: "theft", label: "Theft" },
+    { value: "cattle_rustling", label: "Cattle Rustling" },
+    { value: "farmer_herder_conflict", label: "Farmer-Herder Conflict" },
+    { value: "domestic_violence", label: "Domestic Violence" },
+    { value: "armed_robbery", label: "Armed Robbery" },
+    { value: "market_dispute", label: "Market Dispute" },
+    { value: "flooding", label: "Flooding" },
+    { value: "fire_outbreak", label: "Fire Outbreak" },
+    { value: "suspicious_activity", label: "Suspicious Activity" }
   ];
 
   return (
@@ -344,11 +346,12 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
               <div>
                 <h4 className="font-semibold text-destructive">High-Risk Areas</h4>
                 <p className="text-sm text-muted-foreground mt-1">Based on recent security data</p>
-                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                  <li>• Billiri LGA - Farmer-herder conflicts</li>
+                <ul className="text-sm text-yellow-700 space-y-1">
+                  <li>• Bolari District - Kalare gang activity and violence</li>
+                  <li>• Billiri LGA - Farmer-herder conflicts and cattle rustling</li>
                   <li>• Kaltungo LGA - Cattle rustling incidents</li>
-                  <li>• Rural roads - Traffic accidents frequent</li>
-                  <li>• Market areas - Theft reports</li>
+                  <li>• Rural roads during evening hours - Avoid traveling alone</li>
+                  <li>• Market areas during peak hours - Stay vigilant for gang activity</li>
                 </ul>
               </div>
             </div>

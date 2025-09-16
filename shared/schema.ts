@@ -45,7 +45,8 @@ export type SecurityArea = typeof securityAreas.$inferSelect;
 export type InsertSecurityArea = z.infer<typeof insertSecurityAreaSchema>;
 
 // Incident type enum - Updated for Gombe State common incidents
-export const incidentTypes = [
+export const incidentTypeEnum = z.enum([
+  "kalare_gang_activity",
   "road_accident",
   "theft", 
   "cattle_rustling",
@@ -57,7 +58,7 @@ export const incidentTypes = [
   "fire_outbreak",
   "suspicious_activity",
   "other"
-] as const;
+]);
 
 export const severityLevels = ["low", "medium", "high", "critical"] as const;
 export const riskLevels = ["safe", "low", "medium", "high", "critical"] as const;

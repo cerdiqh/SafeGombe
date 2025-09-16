@@ -119,6 +119,7 @@ export default function AnalyticsDashboard({ incidents, securityAreas, isLoading
 
   const getTypeIcon = (type: string) => {
     switch (type) {
+      case "kalare_gang_activity": return "⚠️";
       case "road_accident": return "🚗";
       case "theft": return "🔓";
       case "cattle_rustling": return "🐄";

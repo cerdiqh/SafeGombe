@@ -453,7 +453,7 @@ export default function SecurityMap({ incidents, securityAreas, isLoading }: Sec
           </div>
           <div className="flex justify-between">
             <span className="text-red-600 font-medium">Billiri LGA:</span>
-            <span>Cattle rustling, farmer-herder conflicts</span>
+            <span>Kalare gang activity, cattle rustling</span>
           </div>
           <div className="flex justify-between">
             <span className="text-yellow-600 font-medium">Gombe Central:</span>
