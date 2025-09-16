@@ -274,11 +274,11 @@ export default function SafetyAreas({ securityAreas, isLoading }: SafetyAreasPro
               <div>
                 <h4 className="font-medium text-yellow-800 mb-2">High-Risk Areas to Avoid</h4>
                 <ul className="text-sm text-yellow-700 space-y-1">
-                  <li>• Bolari District - Kalare gang activity and violence</li>
+                  <li>• Jekadafari - High Kalare gang activity and phone snatching at night</li>
+                  <li>• Manawachi - Kalare gang violence and phone theft hotspot</li>
+                  <li>• Bolari District - Gang activity and violence</li>
                   <li>• Billiri LGA - Farmer-herder conflicts and cattle rustling</li>
-                  <li>• Kaltungo LGA - Cattle rustling incidents</li>
                   <li>• Rural roads during evening hours - Avoid traveling alone</li>
-                  <li>• Market areas during peak hours - Stay vigilant for gang activity</li>
                 </ul>
               </div>
             </div>

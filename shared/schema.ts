@@ -47,6 +47,7 @@ export type InsertSecurityArea = z.infer<typeof insertSecurityAreaSchema>;
 // Incident type enum - Updated for Gombe State common incidents
 export const incidentTypeEnum = z.enum([
   "kalare_gang_activity",
+  "phone_snatching",
   "road_accident",
   "theft", 
   "cattle_rustling",

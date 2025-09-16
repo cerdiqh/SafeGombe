@@ -219,6 +219,7 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
 
   const incidentTypes = [
     { value: "kalare_gang_activity", label: "Kalare Gang Activity", icon: "⚠️" },
+    { value: "phone_snatching", label: "Phone Snatching", icon: "📱" },
     { value: "road_accident", label: "Road Accident", icon: "🚗" },
     { value: "theft", label: "Theft", icon: "🔓" },
     { value: "cattle_rustling", label: "Cattle Rustling", icon: "🐄" },
@@ -458,8 +459,8 @@ export default function IncidentReportForm({ onSubmit, onCancel }: IncidentRepor
               <div className="text-xs">
                 <p className="font-medium text-blue-800 mb-1">Safety Tips:</p>
                 <ul className="space-y-1 text-blue-700">
-                  <li>• <strong>Kalare Gang Activity:</strong> Avoid isolated areas, especially at night. Travel in groups and stay in well-lit public spaces. Report suspicious gatherings immediately.</li>
-                  <li>• Report suspicious activities immediately</li>
+                  <li>• <strong>Kalare Gang Activity:</strong> Avoid Jekadafari, Manawachi, and Bolari areas at night. Travel in groups and report suspicious gatherings immediately.</li>
+                  <li>• <strong>Phone Snatching:</strong> Keep phones secure at night, especially in Jekadafari and Manawachi. Use hands-free devices when possible.</li>
                   <li>• Stay alert during market days and evening hours</li>
                   <li>• Keep emergency contacts saved in your phone</li>
                   <li>• Avoid traveling alone on rural roads after dark</li>

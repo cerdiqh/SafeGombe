@@ -214,6 +214,7 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
   const incidentTypes = [
     { value: "all", label: "All Incidents" },
     { value: "kalare_gang_activity", label: "Kalare Gang Activity" },
+    { value: "phone_snatching", label: "Phone Snatching" },
     { value: "road_accident", label: "Road Accident" },
     { value: "theft", label: "Theft" },
     { value: "cattle_rustling", label: "Cattle Rustling" },
@@ -279,22 +280,16 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
           <div className="mb-4">
             <Label className="block text-sm font-medium text-foreground mb-2">Incident Type</Label>
             <div className="space-y-2">
-              {incidentTypeConfig.map((config) => (
-                <div key={config.id} className="flex items-center space-x-2">
+              {incidentTypes.map((type) => (
+                <div key={type.value} className="flex items-center space-x-2">
                   <Checkbox
-                    id={config.id}
-                    checked={selectedFilters.incidentTypes.includes(config.id)}
-                    onCheckedChange={(checked) => handleIncidentTypeChange(config.id, checked as boolean)}
+                    id={type.value}
+                    checked={selectedFilters.incidentTypes.includes(type.value)}
+                    onCheckedChange={(checked) => handleIncidentTypeChange(type.value, checked as boolean)}
                   />
-                  <Label htmlFor={config.id} className="flex-1 text-sm">
-                    {config.label}
+                  <Label htmlFor={type.value} className="text-sm font-normal cursor-pointer">
+                    {type.label}
                   </Label>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    config.color === 'destructive' ? 'bg-destructive text-destructive-foreground' : 
-                    config.color === 'warning' ? 'bg-warning text-warning-foreground' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {config.severity}
-                  </span>
                 </div>
               ))}
             </div>
@@ -347,11 +342,11 @@ export default function Sidebar({ stats, selectedFilters, onFiltersChange }: Sid
                 <h4 className="font-semibold text-destructive">High-Risk Areas</h4>
                 <p className="text-sm text-muted-foreground mt-1">Based on recent security data</p>
                 <ul className="text-sm text-yellow-700 space-y-1">
-                  <li>• Bolari District - Kalare gang activity and violence</li>
+                  <li>• Jekadafari - High Kalare gang activity and phone snatching at night</li>
+                  <li>• Manawachi - Kalare gang violence and phone theft hotspot</li>
+                  <li>• Bolari District - Gang activity and violence</li>
                   <li>• Billiri LGA - Farmer-herder conflicts and cattle rustling</li>
-                  <li>• Kaltungo LGA - Cattle rustling incidents</li>
                   <li>• Rural roads during evening hours - Avoid traveling alone</li>
-                  <li>• Market areas during peak hours - Stay vigilant for gang activity</li>
                 </ul>
               </div>
             </div>

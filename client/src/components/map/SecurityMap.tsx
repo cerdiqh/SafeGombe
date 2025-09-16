@@ -448,16 +448,20 @@ export default function SecurityMap({ incidents, securityAreas, isLoading }: Sec
         </h4>
         <div className="space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-orange-600 font-medium">Central Market:</span>
-            <span>Crowded areas, petty theft</span>
+            <span className="text-red-600 font-medium">Jekadafari:</span>
+            <span>High Kalare gang activity, phone snatching</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-red-600 font-medium">Billiri LGA:</span>
-            <span>Kalare gang activity, cattle rustling</span>
+            <span className="text-red-600 font-medium">Manawachi:</span>
+            <span>Gang violence, phone theft hotspot</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-yellow-600 font-medium">Gombe Central:</span>
-            <span>Increased patrols reported (verify with official sources)</span>
+            <span className="text-orange-600 font-medium">Bolari District:</span>
+            <span>Gang activity and violence</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-yellow-600 font-medium">Billiri LGA:</span>
+            <span>Farmer-herder conflicts, cattle rustling</span>
           </div>
         </div>
       </Card>
